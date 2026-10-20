@@ -208,5 +208,61 @@ int main() {
     std::fprintf(stderr, "");
     return 1;
   }
-}
 
+auto c = 12;
+  switch (c) {
+    case 0 ... 255/2:
+      break;
+    case 133 ... UINT8_MAX:
+      break;
+    default: 
+  }
+  int64_t d = 12;
+  switch (d) {
+    case INT64_MIN ... INT64_MAX: {
+      break;
+                                  }
+  }
+
+  // ITERATORS 
+  
+  std::vector<uint64_t> vector = {30, 40, 25};
+  std::vector<uint64_t>::iterator our_iterator = vector.begin();
+
+  while (our_iterator != vector.end()) {
+    std::printf("%d\n", *our_iterator);
+    ++our_iterator;
+  }
+  
+  // STRING ITERATORS
+
+  std::string s = "complete";
+  std::vector<char>::iterator si = s.begin();
+
+  while (si != s.end()) {
+    std::println("{}", *si);
+    ++si;
+  };
+
+
+
+  // todo: spawn threads and jthreads here 
+  for (auto i = 0; i < cmds.size(); i++) {
+      auto idx = &cmds[i]; // todo: does this take the reference like in rust?  is this a type of copy?
+      std::thread z([idx, f] {
+      switch (*idx) {      // todo: is derefencing this cost free?
+        case Cmd::One: {
+          auto l1=f(1,2, "one");
+          break;
+        }
+        case Cmd::Two: {
+          auto l2=f(3,2, "two");
+          break;
+        }
+        default:
+          auto l3=f(3,5, "three");
+          break;
+      };
+    });
+  };
+}
