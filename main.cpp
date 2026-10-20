@@ -107,8 +107,8 @@ int main() {
     std::printf("the ptr is null");
   };
 
-  int arr[]  = {10, 20, 30};
-  int *p = arr;
+ //  int arr[]  = {10, 20, 30};
+  // int *p = arr;
 
   num_y++;
 
@@ -202,10 +202,11 @@ int main() {
   
   int* arr = static_cast<int*>(std::malloc(n*sizeof(int)));
 
-  int arr[] = {10, 20, 30};
+  // int arr[] = {10, 20, 30};
 
   if (arr == nullptr) {
     std::fprintf(stderr, "");
     return 1;
   }
+}
 
