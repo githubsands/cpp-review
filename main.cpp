@@ -19,57 +19,135 @@
 #include <algorithm>
 #include <cstdlib>
 #include <functional>
-#include <thread>
 #include <cstdio>
-#include <string>
 #include <format>
 #include <print>
+
+#include <string>
 #include <vector>
+#include <deque>        
+#include <queue>         
+#include <deque>         // std::collections::BinaryHeap
+#include <unordered_set> // std::collections:::HashSet
+#include <unordered_map> // std::collections::HashMap
+                        
 #include <ranges>  // ranges & views
+                   
+
+#include <mutex>
 
 #include <optional>
 #include <expected>
 
+
+// #include <parallel>
+
+// todo: namespaces
+// todo: using
+
 const uint64_t DEFAULT_EXECUTION_LIMIT = 10000;
 
+// -- CONSTEXPR -- (compile time constant)
+
+constexpr uint64_t DEFUALT_COMPILED_COMPUTED =  8 * 8;
+
+ // -- OPTIONS -- 
+   
+std::optional<bool> return_opt(bool yes) {
+  if (yes) {
+    return std::optional(true);
+  } else {
+    return std::nullopt;
+  }
+}
+
 int main() {
-  
+
   // -- COLLECTIONS --
-  // 
+  //
+  // todo: how to leverage optionals with empty collections like in rust?
+
   // 1. hashset
+
+  std::unordered_set<int> hs;
+  hs.insert(3);
+  hs.insert(4);
+
   // 2. hashmap
-  // 3. queue
-  // 4. deque
+
+  std::unordered_map<int, int> hm;
+  hm.insert({1, 10});
+  hm.erase(1);
+  auto iterator_hm = hm.find(2);
+
+  auto r_hm = std::ranges::subrange(iterator_hm, hm.end());
+  if (std::ranges::empty(r_hm)) {
+    std::printf("EMPTY\n");
+  }
+
+  // or:
+  //
+  // if (iterator_hm == hm.end()) {
+  // std::printf("EMPTY\n");
+  // }
+  
+
+  while (iterator_hm != hm.end()) {
+    ++iterator_hm;
+  }
+
+  // or:
+  // 
+  // for (auto it = hm.find(2); it != hm.end(); i+++) {
+  //
+  // }
+  
+  // 3. queue (stack...tree,dfs)
+
+  std::queue<int> q;
+  q.push(1);
+  q.push(2);
+  q.front();
+  q.pop();
+  
+  // drain queue
+  while (!q.empty()) {
+    q.pop();
+  };
+
+  // 4. deque (tree,bfs...)
+
+  std::deque<int> d;
+  d.push_back(1);
+  d.push_front(2);
+  d.pop_front();
+  d.pop_back();
+
+  auto fr = d.front();
+
   // 5. priority_queue
 
-  // std::queue<int> q;
-  // q.push(1);
-  // q.push(2);
-  // q.front();
-  // q.pop();
+  std::deque<int> z;
+  q.push(1);
+  q.push(2);
+  q.front();
+  q.pop();
 
-  // std::deque<int> d;
-  // d.push_front(10);
-  // d.push_back(9);
-  // d.pop_front();
-  
-  // std::priority_queue<int> pq;
-  // pq.push(5)
-  // pq,push(8)
-  // pq.top()
-  // pq.pop()
+  // 6. priority_queue (heap)
+  // 
+  // todo: how to do custom cmps?
 
-  // std::priority_queue<int, std::vector<int> , std::greater<int>> minpq;
-
-  // monads
-  // .and_then  (fmap / select)
-  // .transform (monadic bind)
-  // .or_else   (fall/back recovery)
-
+  std::priority_queue<int> pq;
+  pq.push(5);
+  pq.push(8);
+  pq.top();
+  pq.pop();
 
   for (uint64_t i = 0; i <= DEFAULT_EXECUTION_LIMIT; i++) {
     // execution(i);
   }
+
+  // -- ENUMS --
 
   enum Cmd {
     One,
@@ -82,18 +160,7 @@ int main() {
     Eight
   };
 
-  // OBJECT WITH RAW PTR
-
-  struct Pointer {};
-  Pointer pw = Pointer();
-  Pointer* pp = &pw;
-
-  // OBJECT WITH SMART PTR : unique_ptr and shared_ptr 
-
-  std::shared_ptr<Pointer> ps = std::make_shared<Pointer>(pw); // Arc<T>
-  std::unique_ptr<Pointer> pz = std::make_unique<Pointer>(pw); // Box<T>
-
-  // -- POINTERS -- 
+  // -- RAW POINTERS -- 
 
   int x = 12;
   int* num_x = &x;
@@ -116,8 +183,22 @@ int main() {
     std::printf("the ptr is null");
   };
 
-  std::printf("%d\n%d\n", *num_x, *num_y);
+  // -- OBJECT WITH RAW PTR -- 
 
+  struct Pointer {};
+  Pointer pw = Pointer();
+  Pointer* pp = &pw;
+
+  // -- OBJECT WITH SMART PTR -- : unique_ptr and shared_ptr 
+
+  std::shared_ptr<Pointer> ps = std::make_shared<Pointer>(pw); // Arc<T>
+  std::unique_ptr<Pointer> pz = std::make_unique<Pointer>(pw); // Box<T>
+
+  // -- MUTEXES -- 
+
+
+  /*
+  
   std::mutex mtx;
   mtx.lock();
   // todo: what is this & below?
@@ -140,8 +221,16 @@ int main() {
 
   // join synchronizes t_B with t_A - we can now read t_B's write 
   t_B.join();
-  // w:w
+
   std::println("pos = {}", result);
+  */
+
+  // -- FUNCTIONAL PROGRAMMING -- 
+  
+  // monads
+  // .and_then  (fmap / select)
+  // .transform (monadic bind)
+  // .or_else   (fall/back recovery)
 
   // -- LAMBDA W/ EXPECTED AND UNEXPECTED  --
 
@@ -160,7 +249,6 @@ int main() {
     printf("bad");
   };
 
-  
    // -- LAMBDA W/ OPTIONAL SIGNATURE --
   
   auto maybe = [](int a) -> std::optional<int> {
@@ -178,7 +266,6 @@ int main() {
     return a + b;
   };
 
-  // todo: now switch to an array
   std::vector<Cmd> cmds = {};
 
   cmds.insert(cmds.begin(), Cmd::One);
@@ -189,42 +276,37 @@ int main() {
   cmds.insert(cmds.begin(), Cmd::Six);
   cmds.insert(cmds.begin(), Cmd::Seven);
 
-  // ------
-
-  // todo: now use mutexes and what not ... try to control execution ordering ... 
-  //       try to make ordering deterministic
-  // todo: go through latches, sempahores, mutexes, atomics, channels ...
+  // -- ARRAY CONTIGUOUS MEMORY PTR ARITHMETIC -- 
   
 
-  // -- Malloc -- 
+  // -- MALLOC --
   
   auto n = 12;
-  
   int* arr = static_cast<int*>(std::malloc(n*sizeof(int)));
-
-  // int arr[] = {10, 20, 30};
 
   if (arr == nullptr) {
     std::fprintf(stderr, "");
     return 1;
   }
 
-auto c = 12;
-  switch (c) {
+  // -- SWITCH STATEMENTS (c++ 'match' statement) --
+
+  auto e = 12;
+  switch (e) {
     case 0 ... 255/2:
       break;
     case 133 ... UINT8_MAX:
       break;
     default: 
   }
-  int64_t d = 12;
-  switch (d) {
+  int64_t fe = 12;
+  switch (fe) {
     case INT64_MIN ... INT64_MAX: {
       break;
                                   }
   }
 
-  // ITERATORS 
+  // -- ITERATORS --
   
   std::vector<uint64_t> vector = {30, 40, 25};
   std::vector<uint64_t>::iterator our_iterator = vector.begin();
@@ -234,35 +316,16 @@ auto c = 12;
     ++our_iterator;
   }
   
-  // STRING ITERATORS
+  // -- STRING MANIPULATION WITH ITERATORS --
 
   std::string s = "complete";
   std::vector<char>::iterator si = s.begin();
 
+  // in rust this would be while let Some(_) = s.next() {}
   while (si != s.end()) {
     std::println("{}", *si);
     ++si;
   };
 
-
-
-  // todo: spawn threads and jthreads here 
-  for (auto i = 0; i < cmds.size(); i++) {
-      auto idx = &cmds[i]; // todo: does this take the reference like in rust?  is this a type of copy?
-      std::thread z([idx, f] {
-      switch (*idx) {      // todo: is derefencing this cost free?
-        case Cmd::One: {
-          auto l1=f(1,2, "one");
-          break;
-        }
-        case Cmd::Two: {
-          auto l2=f(3,2, "two");
-          break;
-        }
-        default:
-          auto l3=f(3,5, "three");
-          break;
-      };
-    });
-  };
+  // -- RANGES & VIEWS --
 }
