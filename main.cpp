@@ -1,4 +1,8 @@
 
+
+
+
+
 // INTERVIEW READY C++
 
 // https://hannes.hauswedell.net/post/2019/11/30/range_intro/
@@ -15,24 +19,35 @@
 // 3. inter process communication
 //  * pass data as zero copy ptrs
 
+#include "dfs_tree.h"
+#include "bfs_tree.h"
 
 #include <algorithm>
 #include <cstdlib>
+#include <filesystem>
 #include <functional>
 #include <cstdio>
 #include <format>
 #include <print>
 
+// std::string      | String
+// std::string_view | &str
+// const char[N]    | &'static str
+
 #include <string>
+#include <cstring>
+
+// std::collections::BinaryHeap
+// std::collections:::HashSet
+// std::collections::HashMap
+
 #include <vector>
-#include <deque>        
 #include <queue>         
-#include <deque>         // std::collections::BinaryHeap
-#include <unordered_set> // std::collections:::HashSet
-#include <unordered_map> // std::collections::HashMap
+#include <deque>         
+#include <unordered_set> 
+#include <unordered_map> 
                         
 #include <ranges>  // ranges & views
-                   
 
 #include <mutex>
 
@@ -62,7 +77,6 @@ std::optional<bool> return_opt(bool yes) {
 }
 
 int main() {
-
   // -- COLLECTIONS --
   //
   // todo: how to leverage optionals with empty collections like in rust?
@@ -92,6 +106,7 @@ int main() {
   // }
   
 
+  // drain iterator
   while (iterator_hm != hm.end()) {
     ++iterator_hm;
   }
@@ -109,6 +124,8 @@ int main() {
   q.push(2);
   q.front();
   q.pop();
+  // std::queue<int>::iterator si = q.begin();
+
   
   // drain queue
   while (!q.empty()) {
@@ -120,10 +137,11 @@ int main() {
   std::deque<int> d;
   d.push_back(1);
   d.push_front(2);
-  d.pop_front();
-  d.pop_back();
 
   auto fr = d.front();
+
+  d.pop_front();
+  d.pop_back();
 
   // 5. priority_queue
 
@@ -146,6 +164,8 @@ int main() {
   for (uint64_t i = 0; i <= DEFAULT_EXECUTION_LIMIT; i++) {
     // execution(i);
   }
+
+  // -- STRINGS --
 
   // -- ENUMS --
 
@@ -282,9 +302,9 @@ int main() {
   // -- MALLOC --
   
   auto n = 12;
-  int* arr = static_cast<int*>(std::malloc(n*sizeof(int)));
+  int* arr_2 = static_cast<int*>(std::malloc(n*sizeof(int)));
 
-  if (arr == nullptr) {
+  if (arr_2 == nullptr) {
     std::fprintf(stderr, "");
     return 1;
   }
@@ -297,7 +317,8 @@ int main() {
       break;
     case 133 ... UINT8_MAX:
       break;
-    default: 
+    default:
+      break;
   }
   int64_t fe = 12;
   switch (fe) {
@@ -319,7 +340,7 @@ int main() {
   // -- STRING MANIPULATION WITH ITERATORS --
 
   std::string s = "complete";
-  std::vector<char>::iterator si = s.begin();
+  std::string::iterator si = s.begin();
 
   // in rust this would be while let Some(_) = s.next() {}
   while (si != s.end()) {
@@ -327,5 +348,52 @@ int main() {
     ++si;
   };
 
-  // -- RANGES & VIEWS --
+  // -- STRING MUTABLE W/O ITEARTORS -- 
+  
+  std::string our_str = "hello world";
+  for (size_t i = 0; i < s.size(); i++) {
+    our_str[i] = 'z';
+  }
+
+  // -- STRING MUTABLE W/ ITEARTOR WHILE LEVERAGING i -- 
+  //
+  auto convert_char_transform_func = [](char c) -> char { 
+    switch (c) {
+      case 'z': 
+        return 'a';
+      default:
+        return c;
+    }
+  };
+
+  std::string ze = "zzzzzz";
+  std::ranges::transform(ze.begin(), ze.end(), ze.begin(), convert_char_transform_func);
+
+  std::println("{}", ze);
+
+  std::vector<std::string> v_i{"a", "b", "c"};
+  for (auto [i, s] : std::views::enumerate(v_i)) {
+      std::println("{}: {}", i, s);
+  }
+
+  auto sets = v_i | std::views::enumerate;
+  for (auto j = 0; j++; j< v_i.size()) {
+      std::println("{} {}", v_i[j][0], v_i[j][1]);
+  };
+
+  std::vector vec1{1, 2, 3, 4, 5, 6};
+  auto v = vec1 | std::ranges::views::reverse | std::ranges::views::drop(2);
+
+  std::println("vec1 after applying views original collection the same example {}", vec1);
+
+  std::vector vec2{1, 2, 3, 4, 5, 6};
+  auto vec2_views_output = vec2 | std::ranges::views::reverse | std::ranges::views::drop(2);
+
+  std::println("vec2 views output {}", vec2_views_output);
+
+  auto out = ze | std::ranges::views::filter([](char c) -> bool {
+      return true;
+  }) | std::ranges::to<std::string>();
+
+  std::println("{}", out);
 }
